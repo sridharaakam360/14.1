@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You ❤️</title>
+    <style>
+        body { 
+            background-color: #FFC0CB; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            overflow: hidden; 
+            text-align: center; 
+        }
+
+        h1 { 
+            color: #d63384; 
+            font-size: 2.5rem; 
+            margin-bottom: 30px; 
+            padding: 0 20px;
+        }
+
+        .btn-container { 
+            position: relative; 
+            width: 100%; 
+            height: 100px; 
+        }
+
+        button { 
+            padding: 15px 40px; 
+            font-size: 1.2rem; 
+            border-radius: 50px; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold; 
+            position: absolute; 
+            transition: all 0.2s ease; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); 
+        }
+
+        #yesBtn { 
+            background-color: #ff4d6d; 
+            color: white; 
+            left: 40%; 
+            transform: translateX(-50%); 
+        }
+
+        #noBtn { 
+            background-color: white; 
+            color: #d63384; 
+            left: 60%; 
+            transform: translateX(-50%); 
+        }
+
+        .success-img {
+            width: 250px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .heart-bg {
+            font-size: 100px;
+            animation: beat 0.4s infinite alternate;
+        }
+
+        @keyframes beat { 
+            to { transform: scale(1.1); } 
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="q">Will you accept my proposal? ❤️</h1>
+
+    <div class="btn-container" id="controls">
+        <button id="yesBtn" onclick="yes()">Yes</button>
+        <button id="noBtn" onmouseover="move()" onclick="move()">No</button>
+    </div>
+
+    <script>
+        const msgs = [
+            "Are you sure? 🥺", 
+            "Think again! 🧐", 
+            "Try again! 😂", 
+            "No chance! 😉", 
+            "Pls accept! 🙏", 
+            "Pudikkalaia? 💔"
+        ];
+
+        function move() {
+            const b = document.getElementById('noBtn');
+            // Calculate random positions, staying within viewport boundaries
+            const x = Math.random() * (window.innerWidth - b.offsetWidth);
+            const y = Math.random() * (window.innerHeight - b.offsetHeight);
+            
+            b.style.position = "fixed"; 
+            b.style.left = x + 'px'; 
+            b.style.top = y + 'px';
+            
+            // Randomize the question text
+            document.getElementById('q').innerText = msgs[Math.floor(Math.random() * msgs.length)];
+        }
+
+        function yes() {
+            document.body.innerHTML = `
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueXo0eHlsZzZ0ZzRndm9uYXp3eHlsZzZ0ZzRndm9uYXp3JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/EFenCRE0nV0DsC899P/giphy.gif" 
+                     alt="Hugging Giffy" 
+                     class="success-img">
+                <h1 style="color: #ff4d6d;">I knew it! Love you too Azhagi..! ❤️✨</h1>
+                <p style="font-size: 1.5rem; color: #d63384; font-weight: bold;">You made my day! 🥰</p>
+            `;
+        }
+    </script>
+</body>
+</html>
