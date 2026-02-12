@@ -1,63 +1,443 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For You ❤️</title>
     <style>
-        body { 
-            background-color: #FFC0CB; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            overflow: hidden; 
-            text-align: center; 
+        :root {
+            --cat-orange: #f3a661;
+            --cat-dark: #d3833d;
+            --feature-color: #4a2c2a;
+            --bg-color: #eef2f3;
         }
 
-        h1 { 
-            color: #d63384; 
-            font-size: 2.5rem; 
-            margin-bottom: 30px; 
+        body {
+            background-color: var(--bg-color);
+            /* Updated background */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
             padding: 0 20px;
             z-index: 10;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-container { 
-            position: relative; 
-            width: 100%; 
-            height: 100px; 
+        /* --- ANIMATIONS --- */
+        @keyframes tailWag {
+
+            0%,
+            100% {
+                transform: rotate(-30deg);
+            }
+
+            50% {
+                transform: rotate(-10deg);
+            }
+        }
+
+        @keyframes headBop {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(-50%) rotate(0deg);
+            }
+
+            25% {
+                transform: translateX(-52%) rotate(-1deg);
+            }
+
+            75% {
+                transform: translateX(-48%) rotate(1deg);
+            }
+        }
+
+        /* Particle Animations */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-120px) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes popOut {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.2) rotate(20deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- CHARACTER STRUCTURE --- */
+        .character-wrapper {
+            position: relative;
+            width: 200px;
+            height: 280px;
+            margin-bottom: 2rem;
+            z-index: 5;
+            /* Ensure cat is below text/buttons if needed, or above bg */
+        }
+
+        /* Gradient & Shadow Enhancements for "More Realistic" Look */
+        .head {
+            width: 140px;
+            height: 120px;
+            background: radial-gradient(circle at 30% 30%, #ffd1a1, var(--cat-orange));
+            /* Gradient */
+            border: 4px solid var(--cat-dark);
+            border-radius: 50% 50% 45% 45%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            transition: background 0.3s;
+            animation: headBop 2s infinite ease-in-out;
+            box-shadow: inset -5px -5px 10px rgba(0, 0, 0, 0.1);
+            /* Inner shadow */
+        }
+
+        .head::before,
+        .head::after {
+            content: '';
+            position: absolute;
+            top: -12px;
+            width: 35px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--cat-orange), #e09250);
+            /* Gradient */
+            border: 4px solid var(--cat-dark);
+            z-index: -1;
+            border-radius: 10px;
+        }
+
+        .head::before {
+            left: 10px;
+            transform: rotate(-20deg);
+        }
+
+        .head::after {
+            right: 10px;
+            transform: rotate(20deg);
+        }
+
+        .body-container {
+            width: 110px;
+            height: 130px;
+            background: linear-gradient(to right, var(--cat-orange), #e69c5e);
+            /* Gradient */
+            border: 4px solid var(--cat-dark);
+            border-radius: 50% 50% 40% 40%;
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            transition: background 0.3s;
+            box-shadow: inset -5px -5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .tail {
+            width: 70px;
+            height: 20px;
+            background: var(--cat-dark);
+            /* Darker tail */
+            border: 4px solid var(--cat-dark);
+            position: absolute;
+            right: -25px;
+            bottom: 50px;
+            border-radius: 20px;
+            transform-origin: left center;
+            animation: tailWag 1.5s infinite ease-in-out;
+            z-index: 0;
+        }
+
+        .paw {
+            width: 30px;
+            height: 40px;
+            background: var(--cat-orange);
+            border: 3px solid var(--cat-dark);
+            position: absolute;
+            bottom: 40px;
+            border-radius: 15px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .paw.left {
+            left: 35px;
+        }
+
+        .paw.right {
+            right: 35px;
+        }
+
+        .foot {
+            width: 45px;
+            height: 25px;
+            background: white;
+            /* White socks */
+            border: 3px solid var(--cat-dark);
+            position: absolute;
+            bottom: 15px;
+            border-radius: 20px;
+        }
+
+        .foot.left {
+            left: 25px;
+        }
+
+        .foot.right {
+            right: 25px;
+        }
+
+        .eye {
+            width: 16px;
+            height: 16px;
+            background: var(--feature-color);
+            border-radius: 50%;
+            position: absolute;
+            top: 45px;
+        }
+
+        .eye.left {
+            left: 35px;
+        }
+
+        .eye.right {
+            right: 35px;
+        }
+
+        .mouth {
+            width: 30px;
+            height: 15px;
+            border: 3px solid var(--feature-color);
+            border-top: 0;
+            border-radius: 0 0 15px 15px;
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Particle Styling */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 5;
+            font-size: 24px;
+        }
+
+        /* --- EMOTION OVERRIDES --- */
+        .angry .head,
+        .angry .body-container,
+        .angry .tail,
+        .angry .paw,
+        .angry .foot {
+            background: #ff7675;
+        }
+
+        .angry .head {
+            animation: shake 0.1s infinite;
+        }
+
+        .angry .eye {
+            height: 6px;
+            transform: rotate(20deg);
+            margin-top: 10px;
+        }
+
+        .angry .eye.left {
+            transform: rotate(-20deg);
+        }
+
+        /* SAD EMOTION */
+        .sad .head,
+        .sad .body-container,
+        .sad .paw,
+        .sad .tail {
+            background: #a29bfe;
+        }
+
+        .sad .eye {
+            background: #6c5ce7;
+            top: 50px;
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+        }
+
+        .sad .eye::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            width: 4px;
+            height: 10px;
+            background: #74b9ff;
+            border-radius: 5px;
+        }
+
+        .sad .mouth {
+            border: 3px solid #eee;
+            border-bottom: 0;
+            border-radius: 15px 15px 0 0;
+            bottom: 20px;
+            width: 20px;
+            height: 10px;
+        }
+
+        .sad .tail {
+            animation: none;
+            transform: rotate(-50deg);
+        }
+
+        /* WORRY EMOTION */
+        .worry .head,
+        .worry .body-container,
+        .worry .paw,
+        .worry .tail {
+            background: #fdcb6e;
+        }
+
+        .worry .eye {
+            background: white;
+            border: 2px solid #2d3436;
+            width: 18px;
+            height: 18px;
+            top: 40px;
+        }
+
+        .worry .eye::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #2d3436;
+            border-radius: 50%;
+            top: 6px;
+            left: 6px;
+        }
+
+        .worry .mouth {
+            width: 15px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2d3436;
+            border: none;
+            bottom: 30px;
+        }
+
+        .worry .head::after {
+            content: '💧';
+            position: absolute;
+            top: -20px;
+            right: 0;
+            font-size: 20px;
+            animation: floatUp 1s infinite;
+        }
+
+        .shocked .eye {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border: 2px solid var(--feature-color);
+        }
+
+        .shocked .eye::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: black;
+            border-radius: 50%;
+            top: 5px;
+            left: 5px;
+        }
+
+        .shocked .mouth {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: var(--feature-color);
+        }
+
+        .shocked .tail {
+            animation: none;
+            transform: rotate(-60deg);
+        }
+
+        .btn-container {
+            position: relative;
+            width: 100%;
+            height: 100px;
             z-index: 20;
+            margin-top: 20px;
+            /* Space between cat and buttons */
         }
 
-        button { 
-            padding: 15px 40px; 
-            font-size: 1.2rem; 
-            border-radius: 50px; 
-            border: none; 
-            cursor: pointer; 
-            font-weight: bold; 
-            position: absolute; 
-            transition: all 0.2s ease; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15); 
+        button {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            position: absolute;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
 
-        #yesBtn { 
-            background-color: #ff4d6d; 
-            color: white; 
-            left: 40%; 
-            transform: translateX(-50%); 
+        #yesBtn {
+            background-color: #ff4d6d;
+            color: white;
+            left: 40%;
+            transform: translateX(-50%);
+            z-index: 100;
         }
 
-        #noBtn { 
-            background-color: white; 
-            color: #d63384; 
-            left: 60%; 
-            transform: translateX(-50%); 
+        #noBtn {
+            background-color: white;
+            color: #d63384;
+            left: 60%;
+            transform: translateX(-50%);
+            z-index: 10;
         }
 
         .success-img {
@@ -65,7 +445,7 @@
             border-radius: 20px;
             margin-bottom: 20px;
             z-index: 10;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
         /* Heart Shower Animation */
@@ -82,10 +462,23 @@
                 transform: translateY(0) rotate(0deg) translateX(0);
                 opacity: 0;
             }
-            10% { opacity: 1; }
-            25% { transform: translateY(25vh) rotate(15deg) translateX(20px); }
-            50% { transform: translateY(50vh) rotate(-15deg) translateX(-20px); }
-            75% { transform: translateY(75vh) rotate(10deg) translateX(10px); }
+
+            10% {
+                opacity: 1;
+            }
+
+            25% {
+                transform: translateY(25vh) rotate(15deg) translateX(20px);
+            }
+
+            50% {
+                transform: translateY(50vh) rotate(-15deg) translateX(-20px);
+            }
+
+            75% {
+                transform: translateY(75vh) rotate(10deg) translateX(10px);
+            }
+
             100% {
                 transform: translateY(110vh) rotate(-10deg) translateX(0);
                 opacity: 0;
@@ -93,29 +486,106 @@
         }
     </style>
 </head>
+
 <body>
 
-    <h1 id="q">Will you accept my proposal? ❤️</h1>
+    <h1 id="q">Do you like me? ❤️</h1>
+
+    <div id="character" class="character-wrapper">
+        <div id="tail" class="tail"></div>
+        <div id="head" class="head">
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+            <div class="mouth"></div>
+        </div>
+        <div id="body" class="body-container"></div>
+        <div class="paw left"></div>
+        <div class="paw right"></div>
+        <div class="foot left"></div>
+        <div class="foot right"></div>
+    </div>
 
     <div class="btn-container" id="controls">
         <button id="yesBtn" onclick="yes()">Yes</button>
-        <button id="noBtn" onmouseover="move()" onclick="move()">No</button>
+        <button id="noBtn" onclick="move()">No</button>
     </div>
 
     <script>
-        const msgs = ["Are you sure? 🥺", "Think again! 🧐", "Try again! 😂", "No chance! 😉", "Pls accept! 🙏", "Pudikkalaia? 💔"];
+
+
+        const emotions = ['angry', 'worry', 'sad', 'shocked'];
+        const particleIcons = {
+            happy: ['✨', '⭐', '🎈'],
+            angry: ['💢', '💨', '🔥'],
+            worry: ['💦', '😰', '🌀'],
+            sad: ['💧', '💔', '🌧️'],
+            shocked: ['❓', '❕', '⚡']
+        };
+
+        // Start at -1 so the first click goes to index 0 (angry)
+        let currentEmotion = -1;
+        let particleInterval = null;
+        let yesScale = 1;
+
+        function createParticle(type) {
+            const wrapper = document.getElementById('character');
+            const p = document.createElement('div');
+            const icons = particleIcons[type];
+
+            p.classList.add('particle');
+            p.innerText = icons[Math.floor(Math.random() * icons.length)];
+
+            // Random horizontal start
+            const randomX = Math.random() * 200 - 50;
+            p.style.left = `${randomX}px`;
+            p.style.top = `40px`;
+
+            // Assign animation based on emotion
+            if (type === 'shocked' || type === 'angry') {
+                p.style.animation = `popOut 0.8s forwards ease-out`;
+            } else if (type === 'sad') {
+                p.style.animation = `floatUp 2s forwards linear`; // Slower fall/float for sad
+            } else {
+                p.style.animation = `floatUp 1.5s forwards ease-out`;
+            }
+
+            wrapper.appendChild(p);
+            setTimeout(() => p.remove(), 1500);
+        }
+
+        function nextEmotion() {
+            const char = document.getElementById('character');
+
+            // Clear previous interval (stop happy particles or previous emotion)
+            if (particleInterval) clearInterval(particleInterval);
+
+            // Remove previous emotion class ONLY if we are in the cycle
+            if (currentEmotion >= 0) {
+                char.classList.remove(emotions[currentEmotion]);
+            }
+
+            // Next emotion
+            currentEmotion = (currentEmotion + 1) % emotions.length;
+            const state = emotions[currentEmotion];
+
+            // Add new emotion class
+            char.classList.add(state);
+
+            // Start new particle loop
+            particleInterval = setInterval(() => createParticle(state), 400);
+        }
+
+        // Initialize with happy particles
+        particleInterval = setInterval(() => createParticle('happy'), 600);
 
         function move() {
-            const b = document.getElementById('noBtn');
-            // Ensure button stays within visible viewport
-            const x = Math.random() * (window.innerWidth - b.offsetWidth - 20);
-            const y = Math.random() * (window.innerHeight - b.offsetHeight - 20);
-            
-            b.style.position = "fixed"; 
-            b.style.left = x + 'px'; 
-            b.style.top = y + 'px';
-            
-            document.getElementById('q').innerText = msgs[Math.floor(Math.random() * msgs.length)];
+            // Increase Yes button size
+            yesScale += 0.4;
+            const yesBtn = document.getElementById('yesBtn');
+            yesBtn.style.transform = `translateX(-50%) scale(${yesScale})`;
+
+            // Change cat emotion
+            nextEmotion();
         }
 
         function createShower() {
@@ -124,7 +594,7 @@
             for (let i = 0; i < 10; i++) {
                 const item = document.createElement('div');
                 item.className = 'confetti';
-                
+
                 // Hand-drawn style SVG Heart
                 item.innerHTML = `
                     <svg width="100%" height="100%" viewBox="0 0 24 24" fill="#ff4d6d" xmlns="http://www.w3.org/2000/svg">
@@ -132,19 +602,19 @@
                         stroke="#d63384" stroke-width="1.5" stroke-linejoin="round"/>
                     </svg>
                 `;
-                
+
                 // Randomize start position
                 item.style.left = Math.random() * 100 + 'vw';
-                
+
                 // Randomize size
-                const size = (Math.random() * 20 + 20); 
+                const size = (Math.random() * 20 + 20);
                 item.style.width = size + 'px';
                 item.style.height = size + 'px';
 
                 // Randomize animation speed and delay
                 const duration = (Math.random() * 3 + 3) + 's';
                 const delay = (Math.random() * 2) + 's';
-                
+
                 item.style.animation = `fall ${duration} linear ${delay} forwards`;
                 item.style.opacity = Math.random() * 0.5 + 0.5;
 
@@ -158,14 +628,15 @@
         function yes() {
             document.body.innerHTML = `
                     <img src="Cat%20Hug%20Emoji.gif" alt="Hugging GIF" class="success-img">
-                <h1 style="color: #ff4d6d; z-index: 10; position: relative;">I knew it! Love you too Azhagi..! ❤️✨</h1>
-                <p style="font-size: 1.5rem; color: #d63384; font-weight: bold; z-index: 10; position: relative;">You made my day! 🥰</p>
+                <h1 style="color: #ff4d6d; z-index: 10; position: relative;">Happy Valentine's Day! ❤️✨</h1>
+                
             `;
-            
+// <p style="font-size: 1.5rem; color: #d63384; font-weight: bold; z-index: 10; position: relative;">You made my day! 🥰</p>
             // Trigger the shower effect continuously
-            setInterval(createShower, 600); 
-            createShower(); 
+            setInterval(createShower, 600);
+            createShower();
         }
     </script>
 </body>
+
 </html>
